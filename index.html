@@ -1,11 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diário de Desabafos</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  
-</body>
+  <body>
+    <div class="container">
+        <h1>Diário de Desabafos</h1>
+
+        <div class="grupo-formulario">
+            <label for="textoDesabafo">Desabafo</label>
+            <textarea id="textoDesabafo" rows="3"></textarea>
+        </div>
+        <div class="grupo-formulario">
+            <label for="imagemDesabafo">Imagem do Dia</label>
+            <input type="file" id="imagemDesabafo">
+        </div>
+        <button class="botao" onclick="adicionarDesabafo()">Novo Desabafo</button>
+
+        <div id="containerDesabafos"></div>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
 </html>
