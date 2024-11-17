@@ -6,10 +6,12 @@ if (!containerDesabafos) {
 // Função para adicionar um novo desabafo
 function adicionarDesabafo() {
     const texto = document.getElementById('textoDesabafo').value.trim();
+    const categoria = document.getElementById('categoriaDesabafo').value;
     const inputArquivo = document.getElementById('imagemDesabafo');
     const arquivo = inputArquivo.files[0];
     const data = new Date().toLocaleDateString();
 
+    // Valida se há texto ou imagem antes de prosseguir
     if (!texto && !arquivo) {
         alert('Por favor, insira um texto ou selecione uma imagem para o desabafo.');
         return;
@@ -18,44 +20,49 @@ function adicionarDesabafo() {
     if (arquivo) {
         const leitor = new FileReader();
         leitor.onload = function (e) {
-            const urlImagem = e.target.result;
-            salvarDesabafo({ texto, urlImagem, data });
+            const urlImagem = e.target.result; // URL da imagem carregada
+            salvarDesabafo({ texto, categoria, urlImagem, data });
             carregarDesabafos();
         };
         leitor.readAsDataURL(arquivo);
     } else {
-        salvarDesabafo({ texto, urlImagem: null, data });
+        salvarDesabafo({ texto, categoria, urlImagem: null, data });
         carregarDesabafos();
     }
 
+    // Limpa os campos após adicionar o desabafo
     document.getElementById('textoDesabafo').value = '';
     inputArquivo.value = '';
 }
 
-// Salvar no Local Storage
+// Salva o desabafo no Local Storage
 function salvarDesabafo(desabafo) {
     const desabafos = JSON.parse(localStorage.getItem('desabafos')) || [];
     desabafos.push(desabafo);
     localStorage.setItem('desabafos', JSON.stringify(desabafos));
 }
 
-// Carregar desabafos
-function carregarDesabafos() {
-    containerDesabafos.innerHTML = '';
+// Carrega os desabafos do Local Storage
+function carregarDesabafos(categoria = 'Todas') {
+    containerDesabafos.innerHTML = ''; // Limpa o container de desabafos
     const desabafos = JSON.parse(localStorage.getItem('desabafos')) || [];
-    desabafos.forEach(({ texto, urlImagem, data }) => criarDesabafo(texto, urlImagem, data));
+    const desabafosFiltrados = categoria === 'Todas' ? desabafos : desabafos.filter(d => d.categoria === categoria);
+    desabafosFiltrados.forEach(({ texto, categoria, urlImagem, data }) => criarDesabafo(texto, categoria, urlImagem, data));
 }
 
-// Criar desabafo
-function criarDesabafo(texto, urlImagem, data) {
+// Cria o HTML de um desabafo
+function criarDesabafo(texto, categoria, urlImagem, data) {
     const desabafo = document.createElement('div');
     desabafo.classList.add('desabafo');
 
     const titulo = document.createElement('h3');
-    titulo.textContent = data;
+    titulo.textContent = `${data} - ${categoria}`;
 
     const paragrafo = document.createElement('p');
     paragrafo.textContent = texto;
+
+    desabafo.appendChild(titulo);
+    desabafo.appendChild(paragrafo);
 
     if (urlImagem) {
         const img = document.createElement('img');
@@ -63,9 +70,6 @@ function criarDesabafo(texto, urlImagem, data) {
         img.alt = 'Imagem do Dia';
         desabafo.appendChild(img);
     }
-
-    desabafo.appendChild(titulo);
-    desabafo.appendChild(paragrafo);
 
     const controles = document.createElement('div');
     controles.classList.add('controles-desabafo');
@@ -85,7 +89,7 @@ function criarDesabafo(texto, urlImagem, data) {
     containerDesabafos.prepend(desabafo);
 }
 
-// Editar desabafo
+// Edita um desabafo
 function editarDesabafo(desabafo, textoAtual) {
     const novoTexto = prompt('Editar desabafo:', textoAtual);
     if (novoTexto !== null) {
@@ -99,7 +103,7 @@ function editarDesabafo(desabafo, textoAtual) {
     }
 }
 
-// Excluir desabafo
+// Exclui um desabafo
 function excluirDesabafo(textoAtual) {
     const desabafos = JSON.parse(localStorage.getItem('desabafos')) || [];
     const novosDesabafos = desabafos.filter((d) => d.texto !== textoAtual);
@@ -107,59 +111,10 @@ function excluirDesabafo(textoAtual) {
     carregarDesabafos();
 }
 
-// Inicializar
+// Filtra os desabafos por categoria
+function filtrarDesabafos(categoria) {
+    carregarDesabafos(categoria);
+}
+
+// Inicializa o carregamento dos desabafos
 carregarDesabafos();
-
-// Canvas para as bolas de vôlei
-const canvas = document.getElementById('volleyballCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-class BolaDeVolei {
-    constructor(x, y, velocidadeX, velocidadeY) {
-        this.x = x;
-        this.y = y;
-        this.raio = 30;
-        this.velocidadeX = velocidadeX;
-        this.velocidadeY = velocidadeY;
-        this.cor = '#FFEB3B';
-    }
-    desenhar() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.raio, 0, Math.PI * 2);
-        ctx.fillStyle = this.cor;
-        ctx.fill();
-        ctx.closePath();
-    }
-    mover() {
-        this.x += this.velocidadeX;
-        this.y += this.velocidadeY;
-        if (this.x + this.raio > canvas.width || this.x - this.raio < 0) this.velocidadeX *= -1;
-        if (this.y + this.raio > canvas.height || this.y - this.raio < 0) this.velocidadeY *= -1;
-    }
-}
-
-const bolas = [];
-for (let i = 0; i < 10; i++) {
-    const x = Math.random() * canvas.width;
-    const y = Math.random() * canvas.height;
-    const velocidadeX = (Math.random() - 0.5) * 4;
-    const velocidadeY = (Math.random() - 0.5) * 4;
-    bolas.push(new BolaDeVolei(x, y, velocidadeX, velocidadeY));
-}
-
-function animar() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bolas.forEach((bola) => {
-        bola.mover();
-        bola.desenhar();
-    });
-    requestAnimationFrame(animar);
-}
-animar();
-
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
