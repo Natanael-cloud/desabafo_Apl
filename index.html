@@ -6,7 +6,10 @@
     <title>Diário de Desabafos</title>
     <link rel="stylesheet" href="style.css">
 </head>
-  <body>
+<body>
+    <!-- Canvas para as bolas de vôlei -->
+    <canvas id="volleyballCanvas"></canvas>
+
     <div class="container">
         <h1>Diário de Desabafos</h1>
 
@@ -15,14 +18,33 @@
             <textarea id="textoDesabafo" rows="3"></textarea>
         </div>
         <div class="grupo-formulario">
+            <label for="categoriaDesabafo">Categoria</label>
+            <select id="categoriaDesabafo">
+                <option value="Alegria">Alegria</option>
+                <option value="Tristeza">Tristeza</option>
+                <option value="Gratidão">Gratidão</option>
+                <option value="Ansiedade">Ansiedade</option>
+            </select>
+        </div>
+        <div class="grupo-formulario">
             <label for="imagemDesabafo">Imagem do Dia</label>
             <input type="file" id="imagemDesabafo">
         </div>
         <button class="botao" onclick="adicionarDesabafo()">Novo Desabafo</button>
 
+        <div class="filtros">
+            <button class="botao" onclick="filtrarDesabafos('Todas')">Todas</button>
+            <button class="botao" onclick="filtrarDesabafos('Alegria')">Alegria</button>
+            <button class="botao" onclick="filtrarDesabafos('Tristeza')">Tristeza</button>
+            <button class="botao" onclick="filtrarDesabafos('Gratidão')">Gratidão</button>
+            <button class="botao" onclick="filtrarDesabafos('Ansiedade')">Ansiedade</button>
+        </div>
+
         <div id="containerDesabafos"></div>
     </div>
 
     <script src="index.js"></script>
-  </body>
+</body>
 </html>
+
+
