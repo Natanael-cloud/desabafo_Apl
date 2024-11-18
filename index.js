@@ -6,33 +6,51 @@ let categoriaAtiva = 'Todas'; // Por padrão, exibe todas as categorias
 
 // Função para adicionar um novo desabafo
 function adicionarDesabafo() {
-    // Obtém o texto do desabafo e a categoria selecionada
+    // Obtém o texto do desabafo, a categoria selecionada e a imagem (se houver)
     const texto = document.getElementById('textoDesabafo').value.trim();
     const categoria = document.getElementById('categoriaDesabafo').value;
+    const inputImagem = document.getElementById('imagemDesabafo');
+    const arquivoImagem = inputImagem.files[0];
 
-    // Valida se o texto foi inserido
-    if (!texto) {
-        alert('Por favor, insira um texto para o desabafo.');
+    // Valida se pelo menos texto ou imagem foram fornecidos
+    if (!texto && !arquivoImagem) {
+        alert('Por favor, insira um texto ou selecione uma imagem para o desabafo.');
         return;
     }
 
-    // Salva o desabafo no Local Storage
-    salvarDesabafo({
-        texto,
-        categoria,
-        data: new Date().toLocaleDateString(), // Formata a data para o padrão local
-    });
+    // Caso uma imagem seja fornecida, utiliza o FileReader para converter em Base64
+    if (arquivoImagem) {
+        const leitor = new FileReader();
+        leitor.onload = function (evento) {
+            // Salva o desabafo no Local Storage com a imagem em Base64
+            salvarDesabafo({
+                texto,
+                categoria,
+                data: new Date().toLocaleDateString(),
+                imagem: evento.target.result, // URL Base64 da imagem
+            });
+            carregarDesabafos(); // Recarrega os desabafos na interface
+        };
+        leitor.readAsDataURL(arquivoImagem); // Lê o arquivo de imagem como Base64
+    } else {
+        // Caso não haja imagem, salva apenas o texto, categoria e data
+        salvarDesabafo({
+            texto,
+            categoria,
+            data: new Date().toLocaleDateString(),
+            imagem: null, // Sem imagem
+        });
+        carregarDesabafos();
+    }
 
-    // Recarrega os desabafos para atualizar a interface
-    carregarDesabafos();
-
-    // Limpa o campo de texto após o desabafo ser adicionado
+    // Limpa os campos após adicionar
     document.getElementById('textoDesabafo').value = '';
+    inputImagem.value = '';
 }
 
 // Função para salvar o desabafo no Local Storage
 function salvarDesabafo(desabafo) {
-    // Obtém os desabafos existentes no Local Storage, ou cria um array vazio se não houver nenhum
+    // Recupera os desabafos existentes ou cria um array vazio
     const desabafos = JSON.parse(localStorage.getItem('desabafos')) || [];
     desabafos.push(desabafo); // Adiciona o novo desabafo ao array
     localStorage.setItem('desabafos', JSON.stringify(desabafos)); // Atualiza o Local Storage
@@ -47,13 +65,13 @@ function carregarDesabafos() {
 
     // Filtra os desabafos com base na categoria ativa e no termo de pesquisa
     const resultados = desabafos.filter(({ texto, categoria, data }) => {
-        const correspondeCategoria = categoriaAtiva === 'Todas' || categoria === categoriaAtiva; // Verifica se a categoria corresponde
-        const correspondePesquisa = 
-            texto.toLowerCase().includes(termoPesquisa) || // Pesquisa no texto
-            data.includes(termoPesquisa) || // Pesquisa na data
-            categoria.toLowerCase().includes(termoPesquisa); // Pesquisa na categoria
+        const correspondeCategoria = categoriaAtiva === 'Todas' || categoria === categoriaAtiva;
+        const correspondePesquisa =
+            texto.toLowerCase().includes(termoPesquisa) ||
+            data.includes(termoPesquisa) ||
+            categoria.toLowerCase().includes(termoPesquisa);
 
-        return correspondeCategoria && correspondePesquisa; // Retorna apenas desabafos que atendem ambas as condições
+        return correspondeCategoria && correspondePesquisa;
     });
 
     // Atualiza a interface com os resultados filtrados
@@ -61,7 +79,7 @@ function carregarDesabafos() {
     if (resultados.length > 0) {
         // Se houver resultados, exibe cada desabafo
         resultados.forEach((desabafo, index) =>
-            criarDesabafo(desabafo.texto, desabafo.categoria, desabafo.data, index)
+            criarDesabafo(desabafo.texto, desabafo.categoria, desabafo.data, index, desabafo.imagem)
         );
     } else {
         // Exibe uma mensagem caso nenhum desabafo seja encontrado
@@ -70,7 +88,7 @@ function carregarDesabafos() {
 }
 
 // Função para criar o HTML de um desabafo
-function criarDesabafo(texto, categoria, data, index) {
+function criarDesabafo(texto, categoria, data, index, imagem = null) {
     // Cria um elemento de div para representar o desabafo
     const desabafo = document.createElement('div');
     desabafo.classList.add('desabafo'); // Adiciona uma classe para estilização
@@ -79,6 +97,7 @@ function criarDesabafo(texto, categoria, data, index) {
     desabafo.innerHTML = `
         <h3>${data} - ${categoria}</h3> <!-- Exibe a data e a categoria -->
         <p>${texto}</p> <!-- Exibe o texto do desabafo -->
+        ${imagem ? `<img src="${imagem}" alt="Imagem do Desabafo">` : ''} <!-- Exibe a imagem se houver -->
         <div class="controles-desabafo">
             <button onclick="editarDesabafo(${index})">Editar</button>
             <button onclick="excluirDesabafo(${index})">Excluir</button>
@@ -126,5 +145,7 @@ function pesquisarDesabafos() {
 
 // Inicializa o carregamento dos desabafos ao iniciar a aplicação
 carregarDesabafos();
+
+
 
 
