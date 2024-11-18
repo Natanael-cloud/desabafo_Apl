@@ -12,6 +12,19 @@
 
     <div class="container">
         <h1>Diário de Desabafos</h1>
+        <!-- Barra de Pesquisa -->
+        <div class="grupo-formulario">
+            <label for="barraPesquisa">Pesquisar</label>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input
+                    type="text"
+                    id="barraPesquisa"
+                    placeholder="Busque por palavras ou datas (ex: 16/11/2024)"
+                />
+                <button class="botao" onclick="pesquisarDesabafos()">Pesquisar</button>
+            </div>
+        </div>
+
 
         <div class="grupo-formulario">
             <label for="textoDesabafo">Desabafo</label>
