@@ -1,4 +1,4 @@
-
+/* Reset básico e estilo global */
 * {
   margin: 0;
   padding: 0;
@@ -15,7 +15,25 @@ body {
   min-height: 100vh;
   padding: 10px;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto; /* Ativa a barra de rolagem vertical */
+}
+
+/* Estilização da barra de rolagem */
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #00796b;
+  border-radius: 4px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: #005f5a;
+}
+
+body::-webkit-scrollbar-track {
+  background: #e0f7fa;
 }
 
 .container {
@@ -32,10 +50,12 @@ body {
 h1 {
   color: #00796b;
   text-align: center;
-  font-size: 2em;
+  font-size: 2.5em;
   margin-bottom: 20px;
+  font-weight: bold;
 }
 
+/* Grupo de Formulários */
 .grupo-formulario {
   display: flex;
   flex-direction: column;
@@ -47,32 +67,74 @@ h1 {
 }
 
 .grupo-formulario input[type="text"],
-.grupo-formulario textarea {
+.grupo-formulario textarea,
+#barraPesquisa {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
 .grupo-formulario input[type="file"] {
-  padding: 8px;
+  padding: 10px;
 }
 
+/* Botões principais */
 .botao {
   background-color: #00796b;
   color: #fff;
   border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-size: 1em;
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .botao:hover {
   background-color: #005f5a;
 }
 
-/* Adiciona o layout de grid para os desabafos */
+.botao:active {
+  transform: scale(0.98);
+}
+
+/* Botões de filtro */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.filtros .botao {
+  background-color: #ff7043;
+  color: white;
+  font-size: 1em;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.filtros .botao:hover {
+  background-color: #d84315;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.filtros .botao:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Desabafos */
 #containerDesabafos {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -86,16 +148,27 @@ h1 {
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.desabafo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
 
 .desabafo h3 {
   color: #00796b;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
 .desabafo p {
   word-wrap: break-word;
   white-space: pre-wrap;
+  font-size: 1em;
+  color: #455a64;
 }
 
 .desabafo img {
@@ -106,6 +179,7 @@ h1 {
   margin-top: 10px;
 }
 
+/* Controles nos desabafos */
 .controles-desabafo {
   display: flex;
   justify-content: space-between;
@@ -123,19 +197,24 @@ h1 {
 /* Responsividade */
 @media screen and (max-width: 1024px) {
   #containerDesabafos {
-      grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media screen and (max-width: 768px) {
   #containerDesabafos {
-      grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media screen and (max-width: 480px) {
   #containerDesabafos {
-      grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
+  }
+
+  .filtros {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 
@@ -147,5 +226,6 @@ h1 {
   height: 100%;
   z-index: -1;
 }
+
 
 
